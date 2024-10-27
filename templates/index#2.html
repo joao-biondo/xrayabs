@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>X-ray Absorption Calculator</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .tooltip-icon {
+            cursor: pointer;
+            color: rgb(0, 0, 0);
+            margin-left: 5px;
+        }
+        .tooltip-text {
+            visibility: hidden;
+            width: 200px;
+            background-color: #f9f9f9;
+            color: #000000;
+            text-align: center;
+            border-radius: 5px;
+            padding: 5px;
+            position: absolute;
+            z-index: 1;
+        }
+        .tooltip-icon:hover .tooltip-text {
+            visibility: visible;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <h1>X-ray Transmission Calculator</h1>
+        <p>This website estimates the X-ray beam transmission for a given beam energy and sample. This routine was developed as a support for Paineira beamline users.
+            The values for capillary diameter corresponds to those available at the bemline
+        </p>
+        
+        <form id="calc-form">
+            <label for="chemical_formula">Chemical Formula:</label>
+            <input type="text" id="chemical_formula" name="chemical_formula" pattern="([A-Z][a-z]?\d*\.?\d*)+" required>
+            <span class="tooltip-icon">?
+                <span class="tooltip-text">Enter the sample's chemical formula. Be aware that capitalization is required (e.g., YBa2Cu3O6.5)</span>
+            </span>
+            <br><br>
+            <label for="wavelength">Wavelength/Energy :</label>
+            <input type="text" id="wavelength" name="wavelength" pattern="^-?\d+(\.\d+)?$" required>
+            <span class="tooltip-icon">?
+                <span class="tooltip-text">Enter the X-ray energy in keV or the wavelength in Å.</span>
+            </span>
+            
+            <select name="type_energy" id="type_energy">
+                <option value="wavelength">Wavelength (Å)</option>
+                <option value="energy">Energy (keV)</option>
+            </select><br><br>
+            
+            <label for="capillary_diameter">Capillary Diameter (mm):</label>
+            <select name="capillary_diameter" id="capillary_diameter">
+                <option value="1.00">1.00 mm - Kapton</option>
+                <option value="0.30">0.30 mm - Kapton</option>
+                <option value="0.50">0.50 mm - Kapton</option>
+                <option value="0.70">0.70 mm - Kapton</option>
+                <option value="1.12">1.12 mm - Kapton</option>
+                <option value="1.37">1.37 mm - Kapton</option>
+                <option value="1.57">1.57 mm - Kapton</option>
+                <option value="0.80">0.80 mm (ID) - Quartzo</option>
+                <option value="1.00">1.00 mm (ID) - Quartzo</option>
+                <option value="1.50">1.50 mm (ID) - Quartzo</option>
+                <option value="2.00">2.00 mm (ID) - Quartzo</option>
+            </select>   
+            <br><br>
+            <label for="packing_fraction"> Packing Fraction:</label>
+            <input type="text" id="packing_fraction" name="packing_fraction" pattern="0(\.\d+)?|1" required>
+            <span class="tooltip-icon">?
+                <span class="tooltip-text">Packing Fraction.</span>
+            </span>
+            <br><br>
+            <input type="submit" value="Calculate">
+        </form>
+    
+        <!-- Error message area -->
+        <div id="error-message" class="text-danger mt-3"></div>
+
+        <!-- Results Section -->
+        <h2>Results</h2>
+        <p>Density (g/cm³): <span id="density"></span></p>
+        <p>Packing Density (g/cm³): <span id="packing_density"></span></p>
+        <p>Transmission (%): <span id="transmission"></span></p>
+        <div id="plot"></div>
+
+        <div id="explanation-text" class="mt-4" style="display: none;">
+            <h3>Graph and Calculations</h3>
+            <h4>Density and Transmission</h4>
+            <p>The density is calculated considering that each atom of the unit cell occupies 1 Å³. This is a just an estimate value, but surves our purposes well.</p>
+            <p>The Mass Attenuation Coefficient of an element, gives the probability of interaction of the X-ray photon for a given energy inside a medium composed by that element.
+                The total Mass Attenuation Coefficient is estimated by summing mass attenuation coeficieint of each element multiplied by its mass percentage: 
+                \((\frac{\mu}{\rho})_{T} = \sum_{i} (\frac{\mu}{\rho})_{i} \times \text{mp}_{i}\), where \(\text{mp}_{i}\) is the mass percentage of the i-element.
+            </p>
+            <p>The transmission is calculated using the exponential attenuation formula:
+                Transmission (%) = \(100 \times e^{-\frac{\mu}{\rho} \ \rho \ 2r}\)
+            </p>
+            <p>where μ is the total mass attenuation coefficient, ρ is the sample's density, and d is the capillary diameter.</p></p>
+            <h4>Graph</h4>
+            <p>In the previous section we discussed how to calculate transmission of the X-ray beam given the sample's composition.
+                The graphs above show the Mass Attenuation Coeficient (left) and the \(\mu R\) (right) value of each element as a function of energy.
+                The \(\mu R\) value is the product of the mass attenuation coefficient and the capillary radius. This value corresponds to the argument of the exponential attenuation formula.
+                The black dotted line in the right graph represents a \(\mu R\) value of 5, whihch gives a transmission of approximately 0.005%. Samples with this kind of attenuation have no sensible X-ray Diffraction signal.
+                The red dotted line represents a \(\mu R\) value of 1, which gives a transmission of approximately 13.5%.
+                The optimal \(\mu R\) value for X-ray Diffraction experiments lies between those two dotted lines.
+
+            </p>
+        
+        
+        </div>
+
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script async src="https://cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS_CHTML"></script>
+
+
+
+
+    <script>
+        $('#calc-form').on('submit', function(event) {
+            event.preventDefault();
+            $.post('/calculate', $(this).serialize(), function(data) {
+                if (data.error) {
+                    $('#error-message').text(data.error);
+                } else {
+                    $('#density').text(data.density);
+                    $('#packing_density').text(data.packing_density);
+                    $('#transmission').text(data.transmission);
+                    $('#plot').html(data.plot);
+                    $('#explanation-text').show();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
