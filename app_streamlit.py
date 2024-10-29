@@ -126,7 +126,7 @@ if st.button("Calculate"):
         )
         
             st.write(f"Density: {density:.4f} g/cm³")
-            st.write(f"Packing Density: {packing_density:.4f} g/cm³")
+            st.write(f"Packed Density: {packing_density:.4f} g/cm³")
             st.write(f"µR: {mu_R:.4f}")
             st.write(f"Transmission: {transmission:.2f} %")
             st.write(f"Energy: {energy*(1e-3):.4f} keV")
@@ -143,7 +143,7 @@ if st.button("Calculate"):
                 fig.add_trace(go.Scatter(x=energy_range/1000, y=mu_values, line=dict(width=2, color=cols[i]), name=element, showlegend=False), row=1,col=1)
                 fig.add_trace(go.Scatter(x=energy_range/1000, y=mu_R_values, line=dict(width=2, color=cols[i]), name=element), row=1, col=2)
                 i+=1
-
+            
             fig.add_scatter(x=[energy/1000], y=[mu_R], name="Sample's µR",row=1, col=2)
             fig.add_hline(y=5, line_dash="dash", line_color ='black', name='µR = 5',row =1, col=2, showlegend=True)
             fig.add_hline(y=1, line_dash="dash", line_color ='blue', name='µR = 1',row=1, col=2, showlegend=True)
@@ -160,16 +160,16 @@ if st.button("Calculate"):
             # Graphs and Calculations
             ## Density
             The density is calculated considering that each atom of the unit cell occupies 1 Å³. This is a just an estimate value, but surves our purposes well.
-            The Packing Fraction corresponds to the decrease in the sample's density when filling the capillary, so the Packing Density is the product of the Density and the Packing Fraction.
+            The Packing Fraction corresponds to the decrease in the sample's density when filling the capillary, so the Packed Density is the product of the Density and the Packing Fraction.
             ## Mass Attenuation Coefficient
-            The Mass Attenuation Coefficient of an element, gives the probability of interaction of the X-ray photon for a given energy inside a medium composed by that element.
+            The Mass Attenuation Coefficient of an element gives the probability of interaction of the X-ray photon for a given energy inside a medium composed by that element, per unit of distance traveled.
             The total Mass Attenuation Coefficient is estimated by summing mass attenuation coeficieint of each element multiplied by its mass percentage:
             $$(\frac{\mu}{\rho})_{T} = \sum_{i} (\frac{\mu}{\rho})_{i} \times w_{i}$$, 
                 where $w_{i}$ is the mass percentage of the i-element.
             ## Transmission
             The transmission is calculated using the exponential attenuation formula:
             $$\text{Transmission (\%)} = 100 \times e^{-(\frac{\mu}{\rho}) \ \rho \ 2r}$$,
-            where μ is the total mass attenuation coefficient, ρ is the sample's density, and d is the capillary diameter.
+            where μ is the total mass attenuation coefficient, ρ is the sample's density, and r is the capillary radius.
             ## Graphs        
             In the previous section we discussed how to calculate transmission of the X-ray beam given the sample's composition.
             The graphs above show the Mass Attenuation Coeficient (left) and the $\mu R$ (right) value of each element as a function of energy.
