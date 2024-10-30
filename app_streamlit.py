@@ -150,7 +150,7 @@ if st.button("Calculate"):
             fig.add_trace(go.Scatter(x=energy_range/1000, y=(mu_list*(distance/2)*density), line=dict(width=2, color=cols[i+1]), name="Sample"), row=1, col=2)
             
             fig.add_scatter(x=[energy/1000], y=[mu_R],row=1, col=2, showlegend=False)
-            fig.add_vline(x=energy/1000, line_dash="dash", line_color ='red', name=f'{energy} keV',row =1, col=2, showlegend=True)
+            fig.add_vline(x=energy/1000, line_dash="dash", line_color ='red', name=f'{energy:.4f} keV',row =1, col=2, showlegend=True)
             fig.add_hline(y=5, line_dash="dash", line_color ='black', name='µR = 5',row =1, col=2, showlegend=True)
             fig.add_hline(y=1, line_dash="dash", line_color ='blue', name='µR = 1',row=1, col=2, showlegend=True)
                     
