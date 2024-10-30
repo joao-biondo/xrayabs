@@ -111,7 +111,7 @@ capillary_diameter = st.selectbox("Capillary Diameter (mm)", [
                 "1.50 mm (ID) - Quartzo",
                 "2.00 mm (ID) - Quartzo"
 ])
-packing_fraction = st.text_input("Enter the Packing Fraction.This value represents the decrease in the sample's density when filling the capillary. It should be a value between 0 and 1, and it is often 0.6.")
+packing_fraction = st.text_input("Enter the Packing Fraction. This value represents the decrease in the sample's density when filling the capillary. It should be a value between 0 and 1, and it is often 0.6.")
 if packing_fraction and not re.match(r"^0(\.\d+)?|1$", packing_fraction):
     st.error("It must be a value between 0 and 1.")
 
@@ -119,7 +119,7 @@ if packing_fraction and not re.match(r"^0(\.\d+)?|1$", packing_fraction):
 if st.button("Calculate"):
     if chemical_formula and energy_or_wavelength and packing_fraction:
         elements = get_elements(chemical_formula)
-        if True:#try:
+        try:
             test_chemical_element(chemical_formula)
             density, packing_density, transmission, energy, mu_R, distance, total_mass = calculate(
             chemical_formula, energy_or_wavelength, type_energy, capillary_diameter, float(packing_fraction)
@@ -180,13 +180,13 @@ if st.button("Calculate"):
             where μ is the total mass attenuation coefficient, ρ is the sample's density, and r is the capillary radius.
             ## Graphs        
             In the previous section we discussed how to calculate transmission of the X-ray beam given the sample's composition.
-            The graphs above show the Mass Attenuation Coeficient (left) and the $\mu R$ (right) value of each element as a function of energy.
+            The graphs above show the Mass Attenuation Coeficient (left) and the $\mu R$ (right) value of each element (multiplied by its mass percentage) as a function of energy.
             The $\mu R$ value is the product of the mass attenuation coefficient and the capillary radius. This value corresponds to (half of) the argument of the exponential attenuation formula.
             The black dotted line in the right graph represents a $\mu R$ value of 5, whihch gives a transmission of approximately 0.005%. Samples with this kind of attenuation have no sensible X-ray Diffraction signal.
             The blue dotted line represents a $\mu R$ value of 1, which gives a transmission of approximately 13.5%.
             The optimal $\mu R$ value for X-ray Diffraction experiments lies between those two dotted lines.
             """)
-        else:#except ValueError:
+        except ValueError:
             st.error("Invalid chemical element")
     else:
         st.warning("Please, fill all the field correctly.")
