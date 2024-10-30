@@ -140,14 +140,15 @@ if st.button("Calculate"):
             i=0
             for element in elements:
                 mu_values = xr.mu_elam(element, energy_range)
-                mu_list += mu_values*((elements[element] * xr.atomic_mass(element)) / total_mass)
-                mu_R_values = xr.mu_elam(element, energy_range)*(distance/2)*(density)
+                mass_percentage = ((elements[element] * xr.atomic_mass(element)) / total_mass)
+                mu_list += mu_values*mass_percentage
+                mu_R_values = xr.mu_elam(element, energy_range)*(distance/2)*(packing_density)*mass_percentage
                 fig.add_trace(go.Scatter(x=energy_range/1000, y=mu_values, line=dict(width=2, color=cols[i]), name=element, showlegend=False), row=1,col=1)
                 fig.add_trace(go.Scatter(x=energy_range/1000, y=mu_R_values, line=dict(width=2, color=cols[i]), name=element), row=1, col=2)
                 i+=1
 
             fig.add_trace(go.Scatter(x=energy_range/1000, y=mu_list, line=dict(width=2, color=cols[i+1]), name="µ Total - Sample", showlegend=False), row=1,col=1)
-            fig.add_trace(go.Scatter(x=energy_range/1000, y=(mu_list*(distance/2)*density), line=dict(width=2, color=cols[i+1]), name="Sample"), row=1, col=2)
+            fig.add_trace(go.Scatter(x=energy_range/1000, y=(mu_list*(distance/2)*packing_density), line=dict(width=2, color=cols[i+1]), name="Sample"), row=1, col=2)
             
             fig.add_scatter(x=[energy/1000], y=[mu_R],row=1, col=2, showlegend=False)
             fig.add_vline(x=energy/1000, line_dash="dash", line_color ='red', name=f'{energy*(1e-3):.4f} keV',row =1, col=2, showlegend=True)
