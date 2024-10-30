@@ -134,7 +134,7 @@ if st.button("Calculate"):
             # Gráficos
 
             energy_range = np.arange(5000, 30000, 10)
-            mu_list = []
+            mu_list = np.zeros(energy_range.shape)
             cols = plotly.colors.DEFAULT_PLOTLY_COLORS
             fig = make_subplots(rows=1, cols=2, subplot_titles=('Mass Attenuation Coefficient - µ/ρ', 'µR (Attenuation Coefficient x Capillary Radius)'))
             i=0
