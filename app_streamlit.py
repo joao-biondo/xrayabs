@@ -135,8 +135,8 @@ if st.button("Calculate"):
 
             energy_range = np.arange(5000, 30000, 10)
             mu_list = []
-            for e in energy_range:
-                mu = sum(((elements[element] * xr.atomic_mass(element)) / total_mass) * xr.mu_elam(element, e) for element in elements) * packing_density
+            for energy in energy_range:
+                mu = sum(((elements[element] * xr.atomic_mass(element)) / total_mass) * xr.mu_elam(element, energy) for element in elements) * packing_density
                 mu_list.append(mu)
             cols = plotly.colors.DEFAULT_PLOTLY_COLORS
             fig = make_subplots(rows=1, cols=2, subplot_titles=('Mass Attenuation Coefficient - µ/ρ', 'µR (Attenuation Coefficient x Capillary Radius)'))
