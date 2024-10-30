@@ -64,7 +64,7 @@ def calculate(chemical_formula, energy_or_wavelength, type_energy, capillary_dia
     transmission = math.exp(-distance * m_u_t) * 100
     mu_R = m_u_t * (distance / 2)
 
-    return density, packing_density, transmission, energy, mu_R, distance
+    return density, packing_density, transmission, energy, mu_R, distance, total_mass
 
 def test_chemical_element(chemical_formula):
     elements = get_elements(chemical_formula)
@@ -121,7 +121,7 @@ if st.button("Calculate"):
         elements = get_elements(chemical_formula)
         try:
             test_chemical_element(chemical_formula)
-            density, packing_density, transmission, energy, mu_R, distance = calculate(
+            density, packing_density, transmission, energy, mu_R, distance, total_mass = calculate(
             chemical_formula, energy_or_wavelength, type_energy, capillary_diameter, float(packing_fraction)
         )
         
@@ -134,6 +134,10 @@ if st.button("Calculate"):
             # Gráficos
 
             energy_range = np.arange(5000, 30000, 10)
+            mu_list = []
+            for e in energy_range:
+                mu = sum(((elements[element] * xr.atomic_mass(element)) / total_mass) * xr.mu_elam(element, e) for element in elements) * packing_density
+                mu_list.append(mu)
             cols = plotly.colors.DEFAULT_PLOTLY_COLORS
             fig = make_subplots(rows=1, cols=2, subplot_titles=('Mass Attenuation Coefficient - µ/ρ', 'µR (Attenuation Coefficient x Capillary Radius)'))
             i=0
@@ -143,8 +147,12 @@ if st.button("Calculate"):
                 fig.add_trace(go.Scatter(x=energy_range/1000, y=mu_values, line=dict(width=2, color=cols[i]), name=element, showlegend=False), row=1,col=1)
                 fig.add_trace(go.Scatter(x=energy_range/1000, y=mu_R_values, line=dict(width=2, color=cols[i]), name=element), row=1, col=2)
                 i+=1
+
+            fig.add_trace(go.Scatter(x=energy_range/1000, y=mu_list, line=dict(width=2, color=cols[i+1]), name="µ Total - Sample", showlegend=False), row=1,col=1)
+            fig.add_trace(go.Scatter(x=energy_range/1000, y=(mu_list*(distance/2)*density), line=dict(width=2, color=cols[i+1]), name="µR - Sample"), row=1, col=2)
             
-            fig.add_scatter(x=[energy/1000], y=[mu_R], name="Sample's µR",row=1, col=2)
+            #fig.add_scatter(x=[energy/1000], y=[mu_R], name="Sample's µR",row=1, col=2)
+            fig.add_vline(x=energy/1000, line_dash="dash", line_color ='red', name='µR = 5',row =1, col=2, showlegend=True)
             fig.add_hline(y=5, line_dash="dash", line_color ='black', name='µR = 5',row =1, col=2, showlegend=True)
             fig.add_hline(y=1, line_dash="dash", line_color ='blue', name='µR = 1',row=1, col=2, showlegend=True)
                     
@@ -153,6 +161,7 @@ if st.button("Calculate"):
             fig.update_xaxes(title_font_color='black', title_text="Energy (keV)", type="log", gridcolor='Black', tickfont=dict(color='black'), tickcolor='black', row=1, col=2)
             fig.update_yaxes(title_font_color='black', title_text=r"µ/ρ (cm²/g)", type="log", gridcolor='Black', tickfont=dict(color='black'), tickcolor='black', row=1, col=1)
             fig.update_yaxes(title_font_color='black', title_text=r"µR", type="log", gridcolor='Black', tickfont=dict(color='black'), tickcolor='black', row=1, col=2)
+            fig.update_layout(legend=dict(title_font_family="Serif", font=dict(size=23)))
             st.plotly_chart(fig)
 
             # Explicação dos Gráficos
