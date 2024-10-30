@@ -119,7 +119,7 @@ if packing_fraction and not re.match(r"^0(\.\d+)?|1$", packing_fraction):
 if st.button("Calculate"):
     if chemical_formula and energy_or_wavelength and packing_fraction:
         elements = get_elements(chemical_formula)
-        try:
+        if True:#try:
             test_chemical_element(chemical_formula)
             density, packing_density, transmission, energy, mu_R, distance, total_mass = calculate(
             chemical_formula, energy_or_wavelength, type_energy, capillary_diameter, float(packing_fraction)
@@ -187,7 +187,7 @@ if st.button("Calculate"):
             The blue dotted line represents a $\mu R$ value of 1, which gives a transmission of approximately 13.5%.
             The optimal $\mu R$ value for X-ray Diffraction experiments lies between those two dotted lines.
             """)
-        except ValueError:
+        else:#except ValueError:
             st.error("Invalid chemical element")
     else:
         st.warning("Please, fill all the field correctly.")
