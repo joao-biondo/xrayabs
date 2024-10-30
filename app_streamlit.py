@@ -140,7 +140,7 @@ if st.button("Calculate"):
             i=0
             for element in elements:
                 mu_values = xr.mu_elam(element, energy_range)
-                mu_list += mu_values*(elements[element] * xr.atomic_mass(element)) / total_mass)
+                mu_list += mu_values*((elements[element] * xr.atomic_mass(element)) / total_mass)
                 mu_R_values = xr.mu_elam(element, energy_range)*(distance/2)*(density)
                 fig.add_trace(go.Scatter(x=energy_range/1000, y=mu_values, line=dict(width=2, color=cols[i]), name=element, showlegend=False), row=1,col=1)
                 fig.add_trace(go.Scatter(x=energy_range/1000, y=mu_R_values, line=dict(width=2, color=cols[i]), name=element), row=1, col=2)
