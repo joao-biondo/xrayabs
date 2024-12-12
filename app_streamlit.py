@@ -106,10 +106,23 @@ capillary_diameter = st.selectbox("Capillary Diameter (mm)", [
                 "1.12 mm - Kapton",
                 "1.37 mm - Kapton",
                 "1.57 mm - Kapton",
-                "0.80 mm (ID) - Quartzo",
-                "1.00 mm (ID) - Quartzo",
-                "1.50 mm (ID) - Quartzo",
-                "2.00 mm (ID) - Quartzo"
+                "0.20 mm - Quartzo",
+                "0.30 mm - Quartzo",
+                "0.50 mm - Quartzo",
+                "0.70 mm - Quartzo",
+                "1.00 mm - Quartzo",
+                "1.20 mm - Quartzo",
+                "1.50 mm - Quartzo",
+                "0.80 mm (ID) X 0.92 mm (OD) - Quartzo",
+                "0.80 mm (ID) X 1.00 mm (OD) - Quartzo",
+                "0.86 mm (ID) X 0.92 mm (OD) - Quartzo",
+                "0.90 mm (ID) X 1.00 mm (OD) - Quartzo",
+                "1.00 mm (ID) X 1.12 mm (OD) - Quartzo",
+                "1.00 mm (ID) X 1.20 mm (OD) - Quartzo",
+                "1.06 mm (ID) X 1.12 mm (OD) - Quartzo",
+                "1.10 mm (ID) X 1.20 mm (OD) - Quartzo",
+                "1.50 mm (ID) X 1.80 mm (OD) - Quartzo",
+                "2.00 mm (ID) X 2.40 mm (OD) - Quartzo"
 ])
 packing_fraction = st.text_input("Enter the Packing Fraction. This value represents the decrease in the sample's density when filling the capillary. It should be a value between 0 and 1, and it is often 0.6.")
 if packing_fraction and not re.match(r"^0(\.\d+)?|1$", packing_fraction):
