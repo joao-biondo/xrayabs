@@ -40,7 +40,8 @@ def get_elements(chemical_formula):
         elements[element] = quantity
     return elements
 
-def calculate(chemical_formula, energy_or_wavelength, type_energy, capillary_diameter, packing_fraction):
+    
+def calculate(chemical_formula, energy_or_wavelength, type_energy, capillary_diameter, packing_fraction, dilution=False, pct=0, diluent='graphite carbon'):
     elements = get_elements(chemical_formula)
     if type_energy == 'Energy (keV)':
         energy = float(energy_or_wavelength) * 1000
@@ -48,12 +49,12 @@ def calculate(chemical_formula, energy_or_wavelength, type_energy, capillary_dia
         wavelength = float(energy_or_wavelength)
         energy = (h*c)/(wavelength*(1e-10))
     distance = float(capillary_diameter.split(sep=' ')[0])*0.1
-
     
     total_mass = sum([elements[element] * xr.atomic_mass(element) for element in elements])
     
 
     total_volume = sum([elements[element] * (1e-23) for element in elements])
+
     density = (total_mass * mu) / total_volume
     packing_density = density * packing_fraction
 
@@ -61,6 +62,11 @@ def calculate(chemical_formula, energy_or_wavelength, type_energy, capillary_dia
         ((elements[element] * xr.atomic_mass(element)) / total_mass) * xr.mu_elam(element, energy)
         for element in elements
     ) * packing_density
+    if dilution:
+        diluent_mu = xr.material_mu(diluent, energy)
+        m_u_t = (1-pct/100)*m_u_t + (pct/100)*diluent_mu
+        print(f'{diluent} mu: {diluent_mu}')
+    
     transmission = math.exp(-distance * m_u_t) * 100
     mu_R = m_u_t * (distance / 2)
 
@@ -127,6 +133,12 @@ capillary_diameter = st.selectbox("Capillary Diameter (mm)", [
 packing_fraction = st.text_input("Enter the Packing Fraction. This value represents the decrease in the sample's density when filling the capillary. It should be a value between 0 and 1, and it is often 0.6.")
 if packing_fraction and not re.match(r"^0(\.\d+)?|1$", packing_fraction):
     st.error("It must be a value between 0 and 1.")
+#st.markdown(r'''Select Carbon or Silica for dilution (optional)''')
+col1, col2 = st.columns(2)
+with col1:
+    diluent = st.radio("Select the diluent:", ["No Dilution", "Carbon", "Silica"], captions=['', '(Graphite carbon)', '(SiO2)'])    
+with col2:
+    pct = st.slider("Percentage of Carbon/Silica", 0, 100, 0)
 
 # Executar Cálculo ao Clicar no Botão
 if st.button("Calculate"):
@@ -134,10 +146,18 @@ if st.button("Calculate"):
         elements = get_elements(chemical_formula)
         try:
             test_chemical_element(chemical_formula)
+            if diluent == 'Carbon':
+                dilution = True
+                diluent = 'graphite carbon'
+            elif diluent == 'Silica':
+                dilution = True
+                diluent = 'silica'
+            else:
+                dilution = False
+                diluent = None
             density, packing_density, transmission, energy, mu_R, distance, total_mass = calculate(
-            chemical_formula, energy_or_wavelength, type_energy, capillary_diameter, float(packing_fraction)
-        )
-        
+            chemical_formula, energy_or_wavelength, type_energy, capillary_diameter, float(packing_fraction), dilution, pct, diluent
+            )
             st.write(f"Density: {density:.4f} g/cm³")
             st.write(f"Packed Density: {packing_density:.4f} g/cm³")
             st.write(f"µR: {mu_R:.4f}")
