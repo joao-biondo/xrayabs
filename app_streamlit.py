@@ -65,7 +65,7 @@ def calculate(chemical_formula, energy_or_wavelength, type_energy, capillary_dia
     if dilution:
         diluent_mu = xr.material_mu(diluent, energy)
         m_u_t = (1-pct/100)*m_u_t + (pct/100)*diluent_mu
-        print(f'{diluent} mu: {diluent_mu}')
+        #print(f'{diluent} mu: {diluent_mu}')
     
     transmission = math.exp(-distance * m_u_t) * 100
     mu_R = m_u_t * (distance / 2)
@@ -181,9 +181,9 @@ if st.button("Calculate"):
                 i+=1
 
             fig.add_trace(go.Scatter(x=energy_range/1000, y=mu_list, line=dict(width=2, color=cols[i+1]), name="µ Total - Sample", showlegend=False), row=1,col=1)
-            fig.add_trace(go.Scatter(x=energy_range/1000, y=(mu_list*(distance/2)*packing_density), line=dict(width=2, color=cols[i+1]), name="Sample"), row=1, col=2)
+            fig.add_trace(go.Scatter(x=energy_range/1000, y=(mu_list*(distance/2)*packing_density), line=dict(width=2, color=cols[i+1]), name="Sample (Without Dilution)"), row=1, col=2)
             
-            fig.add_scatter(x=[energy/1000], y=[mu_R],row=1, col=2, showlegend=False)
+            fig.add_scatter(x=[energy/1000], y=[mu_R],row=1, col=2, marker=dict(color='Red', size=12, opacity=0.5), name='Calculated µR', showlegend=True)
             fig.add_vline(x=energy/1000, line_dash="dash", line_color ='red', name=f'{energy*(1e-3):.4f} keV',row =1, col=2, showlegend=True)
             fig.add_hline(y=5, line_dash="dash", line_color ='black', name='µR = 5',row =1, col=2, showlegend=True)
             fig.add_hline(y=1, line_dash="dash", line_color ='blue', name='µR = 1',row=1, col=2, showlegend=True)
@@ -193,7 +193,7 @@ if st.button("Calculate"):
             fig.update_xaxes(title_font_color='black', title_text="Energy (keV)", type="log", gridcolor='Black', tickfont=dict(color='black'), tickcolor='black', row=1, col=2)
             fig.update_yaxes(title_font_color='black', title_text=r"µ/ρ (cm²/g)", type="log", gridcolor='Black', tickfont=dict(color='black'), tickcolor='black', row=1, col=1)
             fig.update_yaxes(title_font_color='black', title_text=r"µR", type="log", gridcolor='Black', tickfont=dict(color='black'), tickcolor='black', row=1, col=2)
-            fig.update_layout(legend=dict(title_font_family="Serif", font=dict(size=23)))
+            fig.update_layout(legend=dict(title_font_family="Serif", font=dict(size=23)), plot_bgcolor='rgba(248, 249, 250, 0.9)', paper_bgcolor='rgba(248, 249, 250, 0.9)')
             st.plotly_chart(fig)
 
             # Explicação dos Gráficos
